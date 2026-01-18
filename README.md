@@ -1,248 +1,197 @@
-🔊 Secure Voice-Based AI Assistant (Local API + LLM + RAG)
+# Secure Voice-Based AI Assistant  
+*(Local API · LLM · RAG · Encryption · Automation)*
 
-An AI-powered, privacy-focused voice assistant designed as a modular desktop system, integrating speech recognition, generative AI reasoning, task automation, biometric authentication, and encrypted data handling.
-The project emphasizes local API architecture, secure processing, and extensibility, making it suitable for real-world deployment and future accessibility use cases.
+An AI-powered, privacy-first voice assistant built as a **modular desktop system**, integrating **speech recognition, generative AI reasoning, retrieval-augmented generation (RAG), biometric authentication, automation, and encrypted data handling**.
 
-🚀 Project Overview
+This project is developed as a **Final Year Major Project**, with strong emphasis on **real-world system architecture, security, and AI engineering best practices**.
 
-This project aims to build a secure and intelligent voice-based personal assistant that operates primarily on a local system while supporting cloud intelligence when required.
-Unlike conventional assistants, the system is architected around a FastAPI-based local API, ensuring modularity, privacy, and controlled execution.
+---
 
-The assistant listens to voice commands, transcribes them accurately, classifies user intent, performs either automation or AI reasoning, and responds in a natural human-like voice.
+## 📌 Project Overview
 
-✨ Key Features
+The Secure Voice-Based AI Assistant enables users to interact with their system using natural voice commands.  
+It listens to user speech, transcribes it accurately, understands intent, performs intelligent reasoning or task automation, and responds in a natural human-like voice.
 
-🎙️ Speech-to-Text (STT) using Whisper / SpeechRecognition
+Unlike conventional assistants, this system is built around a **FastAPI-based local API**, ensuring modularity, privacy, and controlled execution of AI components.
 
-🧠 Generative AI Reasoning using Transformer-based LLMs
+---
 
-🔍 Intent Classification
+## ✨ Key Features
 
-Current: Keyword-based (rule-based)
+- Voice-driven natural interaction  
+- Speech-to-Text (STT) using Whisper / SpeechRecognition  
+- Generative AI reasoning using Transformer-based LLMs  
+- Retrieval-Augmented Generation (RAG) using LangChain  
+- Keyword-based intent classification (current)  
+- Face authentication using LBPH (optional)  
+- End-to-end encryption for audio and transcripts  
+- Local API architecture using FastAPI  
+- Desktop UI using Eel (Python + Web UI)  
+- Privacy-first local processing with hybrid cloud support  
 
-Future: ML/Semantic intent classification
+---
 
-🔐 Biometric Security with Face Authentication (LBPH algorithm)
+## 🧠 System Architecture (High-Level)
 
-🛡️ End-to-End Data Security
+The system follows a modular and event-driven architecture, where each component performs a specific role and communicates through a local API.
 
-Encrypted voice recordings
+### Processing Flow
 
-Encrypted transcript storage
+- Face Authentication (Optional)  
+  User identity is verified using the LBPH face recognition algorithm before activating the assistant.
 
-Secure key management
+- Voice Capture  
+  Voice input is captured via the system microphone and processed in memory.
 
-🔗 Local API Architecture (FastAPI)
+- Audio Preprocessing  
+  Noise reduction, silence trimming, and normalization are applied to improve transcription accuracy.
 
-Clear separation of STT, LLM, RAG, automation, and TTS modules
+- Audio Encryption  
+  Recorded audio is encrypted using AES-based encryption before storage.
 
-🔊 Text-to-Speech (TTS) for natural responses
+- Temporary Decryption (Memory)  
+  Encrypted audio is decrypted only in memory for processing and immediately cleared.
 
-🧩 Retrieval-Augmented Generation (RAG) using LangChain
+- Speech-to-Text (STT)  
+  Whisper or SpeechRecognition converts speech into text.
 
-🖥️ Desktop UI using Eel (Python + Web UI)
+- Intent Classification  
+  Transcribed text is classified into:
+  - Command intent (automation)
+  - Query intent (AI reasoning)
 
-🧠 System Architecture (High-Level)
+- Processing Layer  
+  - Commands are handled by the Automation module  
+  - Queries are processed using LLMs with RAG (LangChain + Vector DB)
 
-The system follows a modular, secure, and event-driven architecture built around a FastAPI-based local server. Each component performs a specific role and communicates through well-defined interfaces.
+- Text-to-Speech (TTS)  
+  AI responses are converted into speech using pyttsx3 or gTTS.
 
-Processing Flow
+- User Interface (UI)  
+  Desktop UI displays transcripts, responses, and plays audio output.
 
-Face Authentication (Optional)
+---
 
-User identity is verified using the LBPH face recognition algorithm before activating the assistant.
+## 🔗 Local API Architecture
 
-Voice Capture
+The **local API is the backbone of the system**.
 
-User voice is captured through the system microphone and processed in memory.
+- Built using FastAPI  
+- Runs on `127.0.0.1`  
+- API-key protected endpoints  
+- Enables clean separation of concerns  
 
-Audio Preprocessing
+### Major API Modules
 
-Noise reduction, silence trimming, and normalization are applied to improve speech recognition accuracy.
+- `/stt` – Speech-to-text processing  
+- `/intent` – Intent classification  
+- `/rag_query` – RAG-based LLM reasoning  
+- `/execute` – Automation commands  
+- `/tts` – Text-to-speech  
+- `/auth` – Face authentication  
 
-Audio Encryption
+---
 
-The captured audio is encrypted using AES-based encryption before being stored, ensuring protection against misuse.
+## 🔐 Security Design
 
-Temporary Decryption (Memory)
+Security is treated as a first-class concern.
 
-Encrypted audio is decrypted temporarily in memory for processing and immediately cleared afterward.
+- Encrypted audio recordings (AES-based)  
+- Encrypted transcript storage  
+- Temporary in-memory decryption only  
+- No plaintext storage of sensitive data  
+- Localhost-only API access  
+- API-key validation for requests  
 
-Speech-to-Text (STT)
+---
 
-Whisper or SpeechRecognition converts speech into text with high accuracy.
+## 🧠 Intent Classification
 
-Intent Classification
+### Current Implementation
+- Rule-based / keyword-based intent classification  
+- Fast and reliable for common commands  
 
-The transcribed text is classified into:
+### Future Scope
+- Semantic intent classification using ML models  
+- Embedding-based or Transformer-based classifiers  
+- Improved understanding for accessibility and complex queries  
 
-Command intent (automation tasks)
+---
 
-Query intent (AI reasoning)
+## 📚 Retrieval-Augmented Generation (RAG)
 
-Processing Layer
+To enhance accuracy and reduce hallucinations, the assistant uses RAG.
 
-Command intents are handled by the Automation module.
+### RAG Workflow
 
-Query intents are processed using LLMs with Retrieval-Augmented Generation (RAG) via LangChain and a vector database.
+1. User query is converted into embeddings  
+2. Relevant documents are retrieved from a vector database  
+3. Retrieved context is injected into the LLM prompt  
+4. LLM generates grounded, context-aware responses  
 
-Text-to-Speech (TTS)
+### Use Cases
 
-The generated response is converted into natural speech using pyttsx3 or gTTS.
+- Project documentation Q&A  
+- Domain-specific knowledge  
+- Offline knowledge retrieval  
+- Accessibility-focused workflows  
 
-User Interface (UI)
+---
 
-The desktop UI (Eel) displays the transcript, AI response, and plays the audio output.
+## 🛠️ Technology Stack
 
-🔗 Local API Backbone
+- Language: Python  
+- Backend: FastAPI  
+- STT: Whisper, SpeechRecognition  
+- LLM: OpenAI API / HuggingFace Transformers  
+- RAG: LangChain, FAISS / ChromaDB  
+- TTS: pyttsx3, gTTS  
+- Face Recognition: OpenCV (LBPH)  
+- UI: Eel  
+- Database: SQLite / SQLCipher (planned)  
+- Security: AES encryption, OS key management  
 
-All system components communicate through a FastAPI-based local API, ensuring modularity and security.
+---
 
-Runs on localhost (127.0.0.1)
+## ⚙️ Hardware Requirements
 
-API-key protected endpoints
+- macOS / Windows / Linux  
+- No dedicated GPU required  
+- Optimized for Apple Silicon (M1/M2/M3/M4)  
+- Microphone and webcam  
 
-Clear separation of modules:
+---
 
-STT
+## ♿ Accessibility & Future Scope
 
-Intent Classification
+- Voice-only interaction for visually impaired users  
+- High-accuracy transcription with confirmation layers  
+- Voice-driven UPI payments  
+- Cross-platform (mobile + desktop) support  
+- Assistive automation for daily tasks  
 
-LLM + RAG
+---
 
-Automation
+## 📈 Why This Project Stands Out
 
-TTS
+- Real-world AI system architecture  
+- Secure local-first design  
+- Modular API-based engineering  
+- Integration of LLMs + RAG  
+- Strong focus on privacy and accessibility  
 
-Authentication
+---
 
-🔐 Security Design
+## 📌 Project Status
 
-Security is treated as a first-class concern, not an afterthought.
+- Active Development (Final Year Major Project)  
+- Phase-1 completed  
+- Security and RAG integration in progress  
 
-Encrypted Audio Storage
-Voice recordings are encrypted immediately after capture and never stored in plaintext.
+---
 
-Encrypted Transcripts
-Transcriptions are encrypted before database storage, preventing leakage even if files are accessed by malware.
+## 👤 Author
 
-Memory-Safe Processing
-Decryption happens only temporarily in memory during processing.
-
-Local API Protection
-
-API bound to localhost
-
-API-key based access control
-
-No external exposure by default
-
-This design protects against misuse of stored voice samples and transcript leakage.
-
-🧠 Intent Classification
-Current Approach
-
-Keyword-based intent classification
-
-Distinguishes between:
-
-Actionable commands (open apps, automate tasks)
-
-Informational queries (sent to LLM)
-
-Future Scope
-
-Semantic / ML-based intent classification
-
-Embedding-based or Transformer-based models
-
-Better handling of complex phrasing and accessibility scenarios
-
-📚 Retrieval-Augmented Generation (RAG)
-
-To strengthen AI reasoning and reduce hallucinations, the assistant supports RAG using LangChain.
-
-How it works:
-
-User query is converted to embeddings
-
-Relevant documents are retrieved from a local vector store
-
-Retrieved context is injected into the LLM prompt
-
-LLM generates a grounded, context-aware response
-
-Use cases:
-
-Project documentation Q&A
-
-Domain-specific knowledge
-
-Accessibility workflows
-
-Offline knowledge support
-
-🛠️ Tech Stack
-
-Programming Language: Python
-
-Backend / API: FastAPI
-
-STT: OpenAI Whisper, SpeechRecognition
-
-LLM: OpenAI API / HuggingFace Transformers
-
-RAG: LangChain, FAISS / ChromaDB
-
-TTS: pyttsx3 / gTTS
-
-Face Recognition: OpenCV (LBPH)
-
-UI: Eel (HTML + JS + Python)
-
-Security: AES-based encryption, OS key management
-
-Database: SQLite / SQLCipher (planned)
-
-⚙️ Hardware Requirements
-
-macOS / Windows / Linux
-
-No dedicated GPU required
-
-Works efficiently on Apple Silicon (M1/M2/M3/M4)
-
-Microphone & Webcam (for voice & face authentication)
-
-♿ Accessibility & Social Impact (Future Scope)
-
-Voice-only interaction for visually impaired users
-
-High-accuracy transcription with confirmation layers
-
-Voice-driven UPI payments and navigation assistance
-
-Cross-platform support (mobile & edge devices)
-
-📈 Why This Project Matters
-
-Demonstrates real-world AI system design
-
-Combines ML, GenAI, Security, APIs, and Automation
-
-Emphasizes privacy-first local processing
-
-Scalable and extensible architecture
-
-Strong alignment with industry AI practices
-
-📌 Status
-
-🟢 Active development (Final Year Major Project)
-🔜 Planned enhancements: Semantic intent classification, advanced RAG, accessibility-focused workflows
-
-👤 Author
-
-Shashwat Malviya
-Final Year Engineering Student | AI / ML Enthusiast
-📌 Interests: Generative AI, System Design, Secure AI, Accessibility Tech
+**Shashwat Malviya**  
+Final Year Engineering Student  
+Interests: Generative AI, System Design, Secure AI, Accessibility Tech  
