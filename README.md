@@ -43,6 +43,8 @@ Clear separation of STT, LLM, RAG, automation, and TTS modules
 🖥️ Desktop UI using Eel (Python + Web UI)
 
 🧠 System Architecture (High-Level)
+
+
 Face Authentication (Optional)
         ↓
 Voice Capture (In-Memory)
