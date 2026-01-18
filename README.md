@@ -44,70 +44,77 @@ Clear separation of STT, LLM, RAG, automation, and TTS modules
 
 🧠 System Architecture (High-Level)
 
+The system follows a modular, secure, and event-driven architecture built around a FastAPI-based local server. Each component performs a specific role and communicates through well-defined interfaces.
 
-┌───────────────────────────────┐
-│        Face Authentication     │
-│        (LBPH - Optional)       │
-└───────────────┬───────────────┘
-                │
-                ▼
-┌───────────────────────────────┐
-│        Voice Capture           │
-│      (Microphone Input)        │
-└───────────────┬───────────────┘
-                │
-                ▼
-┌───────────────────────────────┐
-│     Audio Preprocessing        │
-│ (Noise Reduction, Trimming)   │
-└───────────────┬───────────────┘
-                │
-                ▼
-┌───────────────────────────────┐
-│     Audio Encryption           │
-│   (AES – Stored Securely)      │
-└───────────────┬───────────────┘
-                │
-                ▼
-┌───────────────────────────────┐
-│ Temporary Decryption (Memory)  │
-└───────────────┬───────────────┘
-                │
-                ▼
-┌───────────────────────────────┐
-│   Speech-to-Text (STT)         │
-│  Whisper / SpeechRecognition  │
-└───────────────┬───────────────┘
-                │
-                ▼
-┌───────────────────────────────┐
-│     Intent Classification      │
-│  (Keyword-based – Current)     │
-└───────────────┬───────────────┘
-                │
-                ▼
-        ┌───────┴────────┐
-        │                │
-        ▼                ▼
-┌────────────────┐  ┌──────────────────────────┐
-│ Automation     │  │  LLM + RAG Processing     │
-│ Module         │  │  (LangChain + Vector DB)  │
-│ (Commands)     │  │  (Queries & Reasoning)    │
-└───────┬────────┘  └──────────────┬───────────┘
-        │                           │
-        └───────────────┬───────────┘
-                        ▼
-┌───────────────────────────────┐
-│      Text-to-Speech (TTS)      │
-│        pyttsx3 / gTTS          │
-└───────────────┬───────────────┘
-                │
-                ▼
-┌───────────────────────────────┐
-│       UI Display (Eel)         │
-│ Transcript + Response + Audio │
-└───────────────────────────────┘
+Processing Flow
 
+Face Authentication (Optional)
+
+User identity is verified using the LBPH face recognition algorithm before activating the assistant.
+
+Voice Capture
+
+User voice is captured through the system microphone and processed in memory.
+
+Audio Preprocessing
+
+Noise reduction, silence trimming, and normalization are applied to improve speech recognition accuracy.
+
+Audio Encryption
+
+The captured audio is encrypted using AES-based encryption before being stored, ensuring protection against misuse.
+
+Temporary Decryption (Memory)
+
+Encrypted audio is decrypted temporarily in memory for processing and immediately cleared afterward.
+
+Speech-to-Text (STT)
+
+Whisper or SpeechRecognition converts speech into text with high accuracy.
+
+Intent Classification
+
+The transcribed text is classified into:
+
+Command intent (automation tasks)
+
+Query intent (AI reasoning)
+
+Processing Layer
+
+Command intents are handled by the Automation module.
+
+Query intents are processed using LLMs with Retrieval-Augmented Generation (RAG) via LangChain and a vector database.
+
+Text-to-Speech (TTS)
+
+The generated response is converted into natural speech using pyttsx3 or gTTS.
+
+User Interface (UI)
+
+The desktop UI (Eel) displays the transcript, AI response, and plays the audio output.
+
+🔗 Local API Backbone
+
+All system components communicate through a FastAPI-based local API, ensuring modularity and security.
+
+Runs on localhost (127.0.0.1)
+
+API-key protected endpoints
+
+Clear separation of modules:
+
+STT
+
+Intent Classification
+
+LLM + RAG
+
+Automation
+
+TTS
+
+Authentication
 
 🔐 Security Design
 
