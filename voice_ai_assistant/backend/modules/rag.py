@@ -3,9 +3,7 @@ from __future__ import annotations
 from functools import lru_cache
 from pathlib import Path
 
-import faiss
 import numpy as np
-from sentence_transformers import SentenceTransformer
 
 from modules import llm_client
 
@@ -54,12 +52,16 @@ def _build_chunks() -> tuple[list[str], list[str]]:
 
 
 @lru_cache(maxsize=1)
-def _get_embedder() -> SentenceTransformer:
+def _get_embedder():
+    from sentence_transformers import SentenceTransformer
+
     return SentenceTransformer("all-MiniLM-L6-v2")
 
 
 @lru_cache(maxsize=1)
-def _get_index() -> tuple[faiss.IndexFlatL2 | None, list[str], list[str]]:
+def _get_index():
+    import faiss
+
     chunks, sources = _build_chunks()
     if not chunks:
         return None, [], []
