@@ -16,10 +16,11 @@ export default function App() {
   const [audioBlob, setAudioBlob] = useState(null);
   const [audioUrl, setAudioUrl] = useState("");
   const [transcript, setTranscript] = useState("");
-  const [llmResponse, setLlmResponse] = useState("");
+  const [assistantResponse, setAssistantResponse] = useState("");
   const [ttsUrl, setTtsUrl] = useState("");
   const [status, setStatus] = useState("Idle");
   const [error, setError] = useState("");
+  const [intent, setIntent] = useState("");
 
   const mediaRecorderRef = useRef(null);
   const chunksRef = useRef([]);
@@ -35,8 +36,9 @@ export default function App() {
 
   const resetOutputs = () => {
     setTranscript("");
-    setLlmResponse("");
+    setAssistantResponse("");
     setTtsUrl("");
+    setIntent("");
   };
 
   const startRecording = async () => {
@@ -94,13 +96,13 @@ export default function App() {
     setStatus("File ready");
   };
 
-  const uploadToStt = async () => {
+  const runAssistant = async () => {
     if (!audioBlob) {
       setError("Please record or upload audio first.");
       return null;
     }
 
-    setStatus("Uploading for transcription...");
+    setStatus("Running assistant pipeline...");
     setError("");
 
     const fileName = audioBlob.name || "recording.webm";
@@ -109,26 +111,72 @@ export default function App() {
     const formData = new FormData();
     formData.append("file", file);
 
-    const response = await fetch(`${API_BASE}/stt/transcribe`, {
+    const response = await fetch(`${API_BASE}/assistant/run`, {
       method: "POST",
       body: formData,
     });
 
     if (!response.ok) {
-      const message = await response.text();
-      throw new Error(message || "STT request failed.");
+      let message = "Assistant request failed.";
+      try {
+        const errorData = await response.json();
+        message = errorData.detail || message;
+      } catch {
+        message = await response.text() || message;
+      }
+      throw new Error(message);
     }
 
     const data = await response.json();
-    setTranscript(data.text || "");
-    setStatus("Transcription complete");
+    setTranscript(data.transcript || "");
+    setAssistantResponse(data.response || "");
+    setIntent(data.intent || "");
+
+    if (data.audio_base64) {
+      if (ttsUrl) URL.revokeObjectURL(ttsUrl);
+      const blob = base64ToBlob(data.audio_base64);
+      setTtsUrl(URL.createObjectURL(blob));
+    }
+
+    setStatus("Done");
     return data;
   };
 
   const runSttOnly = async () => {
     try {
       resetOutputs();
-      await uploadToStt();
+      if (!audioBlob) {
+        setError("Please record or upload audio first.");
+        return;
+      }
+
+      setStatus("Uploading for transcription...");
+      setError("");
+
+      const fileName = audioBlob.name || "recording.webm";
+      const file = audioBlob instanceof File ? audioBlob : new File([audioBlob], fileName, { type: audioBlob.type });
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch(`${API_BASE}/stt/transcribe`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        let message = "STT request failed.";
+        try {
+          const errorData = await response.json();
+          message = errorData.detail || message;
+        } catch {
+          message = await response.text() || message;
+        }
+        throw new Error(message);
+      }
+
+      const data = await response.json();
+      setTranscript(data.text || "");
+      setStatus("Transcript ready");
     } catch (err) {
       setError(err.message || "STT failed.");
       setStatus("Idle");
@@ -138,49 +186,7 @@ export default function App() {
   const runFullPipeline = async () => {
     try {
       resetOutputs();
-      const sttData = await uploadToStt();
-      if (!sttData?.text) return;
-
-      setStatus("Generating LLM response...");
-      const llmRes = await fetch(`${API_BASE}/llm/generate`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: sttData.text }),
-      });
-
-      if (!llmRes.ok) {
-        const message = await llmRes.text();
-        throw new Error(message || "LLM request failed.");
-      }
-
-      const llmData = await llmRes.json();
-      setLlmResponse(llmData.response || "");
-
-      if (!llmData.response) {
-        setStatus("LLM response empty");
-        return;
-      }
-
-      setStatus("Generating speech...");
-      const ttsRes = await fetch(`${API_BASE}/tts/speak`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: llmData.response }),
-      });
-
-      if (!ttsRes.ok) {
-        const message = await ttsRes.text();
-        throw new Error(message || "TTS request failed.");
-      }
-
-      const ttsData = await ttsRes.json();
-      if (ttsData.audio_base64) {
-        if (ttsUrl) URL.revokeObjectURL(ttsUrl);
-        const blob = base64ToBlob(ttsData.audio_base64);
-        setTtsUrl(URL.createObjectURL(blob));
-      }
-
-      setStatus("Done");
+      await runAssistant();
     } catch (err) {
       setError(err.message || "Pipeline failed.");
       setStatus("Idle");
@@ -194,7 +200,8 @@ export default function App() {
     setAudioUrl("");
     setTtsUrl("");
     setTranscript("");
-    setLlmResponse("");
+    setAssistantResponse("");
+    setIntent("");
     setStatus("Idle");
     setError("");
     if (fileInputRef.current) fileInputRef.current.value = "";
@@ -207,13 +214,14 @@ export default function App() {
           <p className="eyebrow">Local Voice AI Assistant</p>
           <h1>Speak, Understand, Respond</h1>
           <p className="subhead">
-            Record audio, run speech-to-text, get an LLM response with RAG-ready hooks,
-            and hear the reply. Everything runs locally with encrypted storage.
+            Record audio once and let the backend handle STT, intent routing, command execution,
+            RAG, LLM generation, and spoken output with encrypted storage.
           </p>
         </div>
         <div className="status-card">
           <p className="label">Status</p>
           <p className="status">{status}</p>
+          {intent ? <p className="label">Intent: {intent}</p> : null}
           {error ? <p className="error">{error}</p> : null}
         </div>
       </header>
@@ -257,11 +265,11 @@ export default function App() {
         </div>
         <div>
           <h2>LLM Response</h2>
-          <p className="hint">RAG can be added in the backend retrieval step.</p>
+          <p className="hint">Queries use RAG, commands execute locally, and both return speech.</p>
           <button className="primary" onClick={runFullPipeline}>
             Run Full Pipeline
           </button>
-          <textarea value={llmResponse} readOnly placeholder="LLM response will appear here..." />
+          <textarea value={assistantResponse} readOnly placeholder="Assistant response will appear here..." />
         </div>
       </section>
 

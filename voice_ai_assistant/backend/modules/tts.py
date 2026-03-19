@@ -1,35 +1,39 @@
+from __future__ import annotations
+
+import time
 from pathlib import Path
 from uuid import uuid4
-import wave
+
+import pyttsx3
 
 
-def _write_silence_wav(path: Path, duration_sec: float = 1.0, sample_rate: int = 22050) -> None:
-    frames = int(duration_sec * sample_rate)
-    with wave.open(str(path), "wb") as wf:
-        wf.setnchannels(1)
-        wf.setsampwidth(2)
-        wf.setframerate(sample_rate)
-        wf.writeframes(b"\x00\x00" * frames)
+def _wait_for_audio(path: Path, timeout_sec: float = 10.0) -> None:
+    deadline = time.time() + timeout_sec
+    while time.time() < deadline:
+        if path.exists() and path.stat().st_size > 44:
+            return
+        time.sleep(0.1)
+    raise RuntimeError("TTS audio file was not generated in time.")
 
 
 def speak(text: str, out_dir: Path | None = None) -> str:
     """
-    Convert text to speech. Returns a path to a wav file.
-    Falls back to a short silent wav if TTS backend isn't available.
+    Generate real speech with pyttsx3 and return the saved wav path.
     """
+    if not text.strip():
+        raise ValueError("Cannot synthesize empty text.")
+
     if out_dir is None:
         out_dir = Path.cwd() / "data" / "tts_audio"
     out_dir.mkdir(parents=True, exist_ok=True)
 
     outfile = out_dir / f"{uuid4().hex}.wav"
 
-    try:
-        import pyttsx3
+    engine = pyttsx3.init()
+    engine.setProperty("rate", 175)
+    engine.save_to_file(text, str(outfile))
+    engine.runAndWait()
+    engine.stop()
 
-        engine = pyttsx3.init()
-        engine.save_to_file(text, str(outfile))
-        engine.runAndWait()
-    except Exception:
-        _write_silence_wav(outfile)
-
+    _wait_for_audio(outfile)
     return str(outfile)

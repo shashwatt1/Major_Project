@@ -5,6 +5,8 @@ openai
 transformers
 torch        # if using local HF models
 whisper      # optional
+sentence-transformers
+faiss-cpu
 pydub
 pyttsx3
 SpeechRecognition
