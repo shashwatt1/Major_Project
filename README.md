@@ -124,7 +124,102 @@ voice_ai_assistant/
 ```
 
 ---
+# SYSTEM ARCHITEURE (REPORT VERSION)
 
++-----------------------------------------------------------------------------------+
+|                          VOICE-BASED AI ASSISTANT SYSTEM                          |
++-----------------------------------------------------------------------------------+
+
+        USER / FRONTEND
++----------------------------------+
+| React Web Interface              |
+|----------------------------------|
+| • Voice Recording                |
+| • Transcript Display             |
+| • AI Response Display            |
+| • Audio Playback (TTS)           |
++----------------------------------+
+                 |
+                 | Audio Input
+                 v
+
+        BACKEND – LOCAL API (FASTAPI)
++----------------------------------------------------------------------------+
+|                            FASTAPI API LAYER                               |
+|----------------------------------------------------------------------------|
+|  /stt     /llm     /execute     /rag_query     /tts     /auth              |
++----------------------------------------------------------------------------+
+                 |
+                 v
+
++---------------------------+
+| 1. Speech-to-Text (STT)   |
+|---------------------------|
+| • Whisper                 |
+| • SpeechRecognition       |
++---------------------------+
+                 |
+                 v
+
++---------------------------+
+| 2. Intent Classification  |
+|---------------------------|
+| • Keyword-based Routing   |
+| • Command / Query Split   |
++---------------------------+
+          |                         |
+          | Command                 | Query
+          v                         v
+
++---------------------------+    +------------------------------+
+| 3A. Automation Module     |    | 3B. RAG Pipeline             |
+|---------------------------|    |------------------------------|
+| • Open Applications       |    | • LangChain                  |
+| • Browser Automation      |    | • FAISS Vector Database      |
+| • System Commands         |    | • Sentence Transformers      |
++---------------------------+    +------------------------------+
+                                          |
+                                          v
+
+                           +------------------------------+
+                           | 4. LLM Response Generation   |
+                           |------------------------------|
+                           | • Transformer-based LLM      |
+                           | • OpenAI / HuggingFace       |
+                           +------------------------------+
+                                          |
+                                          v
+
+                           +------------------------------+
+                           | 5. Text-to-Speech (TTS)      |
+                           |------------------------------|
+                           | • pyttsx3                    |
+                           | • gTTS                       |
+                           +------------------------------+
+                                          |
+                                          v
+
++----------------------------------------------------------------------------+
+|                              SECURITY LAYER                                |
+|----------------------------------------------------------------------------|
+| • Audio Encryption (AES)                                                   |
+| • Transcript Encryption                                                    |
+| • Secure Local API Communication                                           |
++----------------------------------------------------------------------------+
+
+                                          |
+                                          v
+
++----------------------------------------------------------------------------+
+|                              DATA STORAGE                                  |
+|----------------------------------------------------------------------------|
+| • Encrypted Audio Files                                                    |
+| • Encrypted Transcripts                                                    |
+| • Conversation History                                                     |
++----------------------------------------------------------------------------+
+
+
+Figure 4.1: Proposed System Architecture of Voice-Based AI Assistant
 ## 🔄 Working Pipeline
 
 1. User records voice input  
