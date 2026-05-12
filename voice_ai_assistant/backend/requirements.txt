@@ -1,16 +1,24 @@
+# Core API
 fastapi
 uvicorn[standard]
 python-multipart
-openai
-transformers
-torch        # if using local HF models
-whisper      # optional
+
+# STT — IMPORTANT: package is 'openai-whisper', NOT 'whisper'
+openai-whisper
+
+# LLM via local Ollama
+httpx
+
+# RAG
 sentence-transformers
 faiss-cpu
-pydub
+numpy
+
+# TTS
 pyttsx3
-SpeechRecognition
-opencv-python
-pyautogui
-eel
+
+# Encryption
 cryptography
+
+# Audio processing (required by Whisper internally)
+pydub

@@ -26,6 +26,14 @@ export default function App() {
   const chunksRef = useRef([]);
   const streamRef = useRef(null);
   const fileInputRef = useRef(null);
+  const audioPlayerRef = useRef(null);
+
+  const stopTts = () => {
+    if (audioPlayerRef.current) {
+      audioPlayerRef.current.pause();
+      audioPlayerRef.current.currentTime = 0;
+    }
+  };
 
   useEffect(() => {
     return () => {
@@ -132,11 +140,37 @@ export default function App() {
     setAssistantResponse(data.response || "");
     setIntent(data.intent || "");
 
+    let finalAudioUrl = "";
     if (data.audio_base64) {
       if (ttsUrl) URL.revokeObjectURL(ttsUrl);
       const blob = base64ToBlob(data.audio_base64);
-      setTtsUrl(URL.createObjectURL(blob));
+      finalAudioUrl = URL.createObjectURL(blob);
+      setTtsUrl(finalAudioUrl);
+    } else if (data.response) {
+      // Fallback: call POST /tts/speak automatically using the generated response text
+      setStatus("Generating audio...");
+      try {
+        const ttsResp = await fetch(`${API_BASE}/tts/speak`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: data.response })
+        });
+        if (ttsResp.ok) {
+          const ttsData = await ttsResp.json();
+          if (ttsData.audio_base64) {
+            if (ttsUrl) URL.revokeObjectURL(ttsUrl);
+            const blob = base64ToBlob(ttsData.audio_base64);
+            finalAudioUrl = URL.createObjectURL(blob);
+            setTtsUrl(finalAudioUrl);
+          }
+        }
+      } catch (err) {
+        console.error("TTS fetch failed:", err);
+      }
     }
+
+    // Autoplay is handled natively by the <audio autoPlay> DOM element,
+    // which ensures the user can use the visible controls to stop it.
 
     setStatus("Done");
     return data;
@@ -194,6 +228,7 @@ export default function App() {
   };
 
   const clearAll = () => {
+    stopTts();
     setAudioBlob(null);
     if (audioUrl) URL.revokeObjectURL(audioUrl);
     if (ttsUrl) URL.revokeObjectURL(ttsUrl);
@@ -276,7 +311,14 @@ export default function App() {
       <section className="panel">
         <h2>Text to Speech</h2>
         <p className="hint">Encrypted transcript stored; audio response rendered below.</p>
-        {ttsUrl ? <audio controls src={ttsUrl} /> : <p className="hint">No audio yet.</p>}
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+          {ttsUrl ? <audio ref={audioPlayerRef} controls autoPlay src={ttsUrl} /> : <p className="hint">No audio yet.</p>}
+          {ttsUrl && (
+            <button className="ghost" onClick={stopTts}>
+              Stop Audio
+            </button>
+          )}
+        </div>
       </section>
 
       <footer className="footer">

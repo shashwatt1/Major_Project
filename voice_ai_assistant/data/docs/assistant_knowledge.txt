@@ -1,0 +1,74 @@
+# Voice AI Assistant — Knowledge Base
+# This file is used by the RAG pipeline for context retrieval.
+
+## About This Assistant
+This is a Voice-Based AI Assistant built as a final year engineering project.
+It uses a local API architecture with FastAPI backend and React frontend.
+The assistant can answer questions, execute system commands, and retrieve information from this knowledge base.
+All audio and transcripts are encrypted using AES encryption (Fernet).
+
+## Architecture Overview
+The assistant pipeline works as follows:
+1. User speaks into the microphone in the browser
+2. Audio is recorded and sent to the FastAPI backend
+3. Whisper AI transcribes the speech to text
+4. An intent classifier determines if the input is a command or a question
+5. Commands are routed to the automator module (open apps, open URLs)
+6. Questions are routed through the RAG pipeline with Ollama LLM
+7. The response is converted to speech using pyttsx3 TTS
+8. The audio is returned to the frontend and played back
+
+## Supported Commands
+The assistant can execute the following voice commands:
+- "Open Safari" — opens Safari browser
+- "Open Chrome" / "Open Google Chrome" — opens Chrome browser
+- "Open WhatsApp" — opens WhatsApp desktop app
+- "Open Notes" — opens Notes app
+- "Open Calendar" — opens Calendar app
+- "Open Terminal" — opens Terminal
+- "Open Finder" — opens Finder
+- "Open Music" / "Open Apple Music" — opens the Music app
+- "Open System Settings" — opens System Settings
+- "Open https://youtube.com" — opens any URL in the default browser
+
+## Technology Stack
+- Frontend: React + Vite running on port 5173
+- Backend: FastAPI + Uvicorn running on port 8000
+- STT: OpenAI Whisper (base model, runs locally)
+- LLM: Ollama with llama3.2 (runs locally, no API key required)
+- RAG: FAISS vector store + sentence-transformers (all-MiniLM-L6-v2)
+- TTS: pyttsx3 (offline text-to-speech)
+- Encryption: Fernet (AES-128 symmetric encryption)
+- Intent Classification: Keyword-based classifier
+
+## Privacy and Security
+All audio recordings are encrypted before storage using AES encryption.
+All transcripts are encrypted before storage.
+No data is sent to any external cloud service.
+The LLM runs entirely locally using Ollama.
+Whisper runs entirely locally on your machine.
+Your voice data never leaves your computer.
+
+## How to Use
+1. Open the web interface at http://localhost:5173
+2. Click "Start Recording" to begin speaking
+3. Click "Stop" when you finish speaking
+4. Click "Run STT" to transcribe your speech only
+5. Click "Run Full Pipeline" to get a full assistant response with speech output
+
+## Frequently Asked Questions
+
+Q: What is this project about?
+A: This is a final year engineering project demonstrating a fully local, privacy-preserving voice AI assistant that runs entirely on your own machine without any cloud dependencies.
+
+Q: What model does the assistant use?
+A: The assistant uses llama3.2 through Ollama for language understanding and generation. Whisper base model is used for speech-to-text transcription.
+
+Q: Is my data safe?
+A: Yes. All audio and text data is encrypted with AES encryption and stored locally. Nothing is sent to any external server.
+
+Q: Can the assistant open applications?
+A: Yes. Say "open" followed by the application name. For example: "open Safari", "open WhatsApp", or "open https://youtube.com".
+
+Q: What is RAG?
+A: RAG stands for Retrieval-Augmented Generation. It allows the assistant to search through knowledge documents and provide answers grounded in specific information rather than relying purely on the language model's training data.

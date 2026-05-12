@@ -13,6 +13,10 @@ DOCS_DIR = BASE_DIR / "data" / "docs"
 CHUNK_SIZE = 500
 CHUNK_OVERLAP = 100
 
+# Relevance threshold: L2 distance above this = docs are NOT relevant to the query.
+# Lower = stricter. 1.0 works well for all-MiniLM-L6-v2 with normalized embeddings.
+_RELEVANCE_THRESHOLD = 1.0
+
 
 def _split_text(text: str, chunk_size: int = CHUNK_SIZE, overlap: int = CHUNK_OVERLAP) -> list[str]:
     cleaned = " ".join(text.split())
@@ -54,7 +58,6 @@ def _build_chunks() -> tuple[list[str], list[str]]:
 @lru_cache(maxsize=1)
 def _get_embedder():
     from sentence_transformers import SentenceTransformer
-
     return SentenceTransformer("all-MiniLM-L6-v2")
 
 
@@ -76,6 +79,10 @@ def _get_index():
 
 
 def retrieve(query: str, top_k: int = 3) -> list[dict[str, str]]:
+    """
+    Retrieve relevant chunks. Returns ONLY chunks whose L2 distance is below
+    _RELEVANCE_THRESHOLD — so irrelevant docs are never returned.
+    """
     index, chunks, sources = _get_index()
     if index is None or not chunks:
         return []
@@ -85,25 +92,34 @@ def retrieve(query: str, top_k: int = 3) -> list[dict[str, str]]:
     query_embedding = np.asarray(query_embedding, dtype="float32")
 
     limit = min(max(top_k, 1), len(chunks))
-    _distances, indices = index.search(query_embedding, limit)
+    distances, indices = index.search(query_embedding, limit)
 
     results: list[dict[str, str]] = []
-    for idx in indices[0]:
-        if 0 <= idx < len(chunks):
+    for dist, idx in zip(distances[0], indices[0]):
+        # Only include results that are genuinely relevant
+        if 0 <= idx < len(chunks) and float(dist) < _RELEVANCE_THRESHOLD:
             results.append({"source": sources[idx], "content": chunks[idx]})
     return results
 
 
 def build_prompt(query: str, top_k: int = 3) -> tuple[str, list[dict[str, str]]]:
     matches = retrieve(query, top_k=top_k)
+
     if not matches:
-        return query, []
+        # No relevant docs found — let the LLM answer from its own knowledge
+        prompt = (
+            "You are a helpful voice assistant. Answer clearly and concisely.\n\n"
+            f"User Question: {query}\n\nAnswer:"
+        )
+        return prompt, []
 
     context = "\n\n".join(f"[{item['source']}]\n{item['content']}" for item in matches)
     prompt = (
-        "Answer the user's question using the retrieved context when relevant.\n\n"
+        "You are a helpful voice assistant. Answer clearly and concisely.\n\n"
+        "Use the Retrieved Context below ONLY if it is directly relevant to the question. "
+        "If the context does not help, ignore it and answer from your own knowledge.\n\n"
         f"Retrieved Context:\n{context}\n\n"
-        f"User Question:\n{query}"
+        f"User Question: {query}\n\nAnswer:"
     )
     return prompt, matches
 
