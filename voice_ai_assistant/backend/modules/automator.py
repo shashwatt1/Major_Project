@@ -56,7 +56,7 @@ def _normalize(text: str) -> str:
 def _open_app_macos(app_name: str) -> dict:
     try:
         subprocess.run(["open", "-a", app_name], check=True, timeout=10)
-        return {"status": "ok", "info": f"Opened {app_name}."}
+        return {"status": "ok", "info": f"Opening {app_name}."}
     except subprocess.CalledProcessError:
         return {"status": "error", "info": f"Could not find app '{app_name}'. Is it installed?"}
     except FileNotFoundError:
@@ -77,7 +77,7 @@ def execute_command(command_text: str) -> dict:
     if url_match:
         url = url_match.group()
         webbrowser.open(url)
-        return {"status": "ok", "info": f"Opened URL: {url}"}
+        return {"status": "ok", "info": f"Opening URL: {url}"}
 
     # ── 2. Scan for any known alias ANYWHERE in the normalized text ───────────
     # Sort by length descending so "google chrome" matches before "chrome"
