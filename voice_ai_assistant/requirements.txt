@@ -1,0 +1,14 @@
+fastapi
+uvicorn[standard]
+python-multipart
+openai
+transformers
+torch        # if using local HF models
+whisper      # optional
+pydub
+pyttsx3
+SpeechRecognition
+opencv-python
+pyautogui
+eel
+cryptography
