@@ -1,0 +1,53 @@
+{
+  "method": "Fully correct = every requested fact stated correctly and nothing contradicting the PDF. Judged only for answers credited with all key facts by the automatic rule (original v1 rule, plus answers newly credited by v2.1); answers not credited were not re-read, so counts are lower bounds. Judgements: single AI annotator (Claude) after outputs were seen, with 53 sampled items reviewed by the author (S001-S053) and 2 newly credited answers judged by the author (2026-10-28).",
+  "author_judgements_added": [
+    "no_rag run3 Q06 = 1",
+    "rag_pdfkit_nothreshold run3 Q21 = 1"
+  ],
+  "per_config": {
+    "rag_pdfkit": {
+      "verified_fully_correct": 21,
+      "of_generations": 120,
+      "rate": 0.175,
+      "questions_with_>=1_verified_run": 9
+    },
+    "no_rag": {
+      "verified_fully_correct": 1,
+      "of_generations": 120,
+      "rate": 0.0083,
+      "questions_with_>=1_verified_run": 1
+    },
+    "rag_pypdf": {
+      "verified_fully_correct": 11,
+      "of_generations": 120,
+      "rate": 0.0917,
+      "questions_with_>=1_verified_run": 5
+    },
+    "rag_pdfkit_nothreshold": {
+      "verified_fully_correct": 33,
+      "of_generations": 120,
+      "rate": 0.275,
+      "questions_with_>=1_verified_run": 13
+    }
+  },
+  "sign_tests_question_level": {
+    "rag_pdfkit_vs_no_rag": {
+      "better": 8,
+      "worse": 0,
+      "ties": 32,
+      "p_two_sided": 0.00781
+    },
+    "rag_pypdf_vs_no_rag": {
+      "better": 4,
+      "worse": 0,
+      "ties": 36,
+      "p_two_sided": 0.125
+    },
+    "nothreshold_vs_rag_pdfkit": {
+      "better": 7,
+      "worse": 3,
+      "ties": 30,
+      "p_two_sided": 0.34375
+    }
+  }
+}
