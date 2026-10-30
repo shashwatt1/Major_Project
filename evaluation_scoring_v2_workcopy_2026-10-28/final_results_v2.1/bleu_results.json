@@ -1,0 +1,146 @@
+{
+  "library": "sacrebleu 2.4.3",
+  "metric": "corpus BLEU-4",
+  "settings": {
+    "tokenize": "13a",
+    "smooth_method": "exp",
+    "lowercase": false,
+    "max_ngram_order": 4,
+    "references_per_segment": 1
+  },
+  "eligible_queries": "answerable only (n=40); unanswerable/ambiguous excluded",
+  "reference_construction": "one hand-written reference answer per query, grounded in the PDF (rag_test_set.jsonl)",
+  "error_handling": "errored generations are scored as empty hypotheses",
+  "results": {
+    "rag_pdfkit": {
+      "run1": {
+        "bleu": 8.41,
+        "precisions": [
+          26.13,
+          10.7,
+          5.76,
+          3.1
+        ],
+        "bp": 1.0,
+        "sys_len": 1087,
+        "ref_len": 632,
+        "n": 40
+      },
+      "run2": {
+        "bleu": 8.61,
+        "precisions": [
+          25.27,
+          10.93,
+          6.23,
+          3.19
+        ],
+        "bp": 1.0,
+        "sys_len": 1092,
+        "ref_len": 632,
+        "n": 40
+      },
+      "run3": {
+        "bleu": 7.42,
+        "precisions": [
+          26.26,
+          10.09,
+          4.84,
+          2.36
+        ],
+        "bp": 1.0,
+        "sys_len": 1051,
+        "ref_len": 632,
+        "n": 40
+      },
+      "mean_over_runs": 8.15,
+      "sd_over_runs": 0.64
+    },
+    "no_rag": {
+      "run1": {
+        "bleu": 4.07,
+        "precisions": [
+          17.9,
+          5.83,
+          2.67,
+          0.98
+        ],
+        "bp": 1.0,
+        "sys_len": 1240,
+        "ref_len": 632,
+        "n": 40
+      },
+      "run2": {
+        "bleu": 4.8,
+        "precisions": [
+          19.11,
+          6.84,
+          3.2,
+          1.27
+        ],
+        "bp": 1.0,
+        "sys_len": 1298,
+        "ref_len": 632,
+        "n": 40
+      },
+      "run3": {
+        "bleu": 4.57,
+        "precisions": [
+          19.39,
+          6.95,
+          3.1,
+          1.04
+        ],
+        "bp": 1.0,
+        "sys_len": 1176,
+        "ref_len": 632,
+        "n": 40
+      },
+      "mean_over_runs": 4.48,
+      "sd_over_runs": 0.37
+    },
+    "rag_pypdf": {
+      "run1": {
+        "bleu": 7.55,
+        "precisions": [
+          25.11,
+          10.12,
+          5.16,
+          2.48
+        ],
+        "bp": 1.0,
+        "sys_len": 1087,
+        "ref_len": 632,
+        "n": 40
+      },
+      "run2": {
+        "bleu": 5.94,
+        "precisions": [
+          22.03,
+          8.23,
+          4.03,
+          1.7
+        ],
+        "bp": 1.0,
+        "sys_len": 1121,
+        "ref_len": 632,
+        "n": 40
+      },
+      "run3": {
+        "bleu": 4.91,
+        "precisions": [
+          21.28,
+          7.11,
+          3.17,
+          1.21
+        ],
+        "bp": 1.0,
+        "sys_len": 1278,
+        "ref_len": 632,
+        "n": 40
+      },
+      "mean_over_runs": 6.13,
+      "sd_over_runs": 1.33
+    }
+  },
+  "signature": "nrefs:1|case:mixed|eff:no|tok:13a|smooth:exp|version:2.4.3"
+}

@@ -1,0 +1,36 @@
+OK  A token F1 0.364 0.364
+OK  B token F1 0.250 0.250
+OK  C token F1 0.306 0.306
+OK  A BLEU mean (full precision) 8.14 8.14
+OK  B BLEU mean 4.48 4.48
+OK  C BLEU mean 6.13 6.13
+OK  A BLEU sd (n-1, full precision) 0.64 0.64
+OK  B BLEU sd 0.38 0.38
+OK  C BLEU sd 1.33 1.33
+OK  C F1 sd 0.006 0.006
+OK  A kf 0.297 0.297
+OK  B kf 0.054 0.054
+OK  C kf 0.155 0.155
+OK  F1 diff 0.114 0.114
+OK  F1 CI lo 0.050 0.050
+OK  F1 CI hi 0.180 0.180
+OK  F1 p exact 0.0006 0.0006
+OK  kf diff 0.243 0.243
+OK  kf CI 0.133,0.358 0.133,0.358
+OK  BLEU diff 3.66 3.66
+OK  BLEU CI 1.46,6.28 1.46,6.28
+OK  A fully correct 21 21
+OK  B fully correct 1 1
+OK  C fully correct 11 11
+OK  N fully correct 33 33
+OK  sign A-B 8/0 p=0.008 8/0 p=0.008
+OK  sign N-A 7/3 p=0.34 7/3 p=0.34
+OK  A all-key hits 24 24
+OK  N token F1 0.404 0.404
+OK  N kf 0.392 0.392
+OK  N-A kf p 0.078 0.078
+OK  N-A allkey p 0.055 0.055
+OK  N-A F1 CI includes 0 True True
+phrases missing in manuscript: []
+stale in manuscript: []
+stale in response: []

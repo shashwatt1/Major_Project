@@ -1,0 +1,66 @@
+PASS  page count <= 6  pages=6
+PASS  A4 page size (595x842 pt)  {(595, 842)}
+PASS  all fonts embedded  unembedded=[]
+      fonts: TimesNewRomanPS-BoldItalicMT, TimesNewRomanPS-BoldMT, TimesNewRomanPS-ItalicMT, TimesNewRomanPSMT
+PASS  title (spaces ignored: title font letter-spacing splits 'V oice' in text extraction)  
+PASS  all six authors on page 1  {'Anita Saroj': 54, 'Pramod Mehra': 339, 'Shashwat Malviya': 637, 'Ritendra Negi': 196, 'Siddhant Srivastava': 482, 'Yash Rawat': 790}
+      author positions in page-1 text: [54, 339, 637, 196, 482, 790]
+PASS  abstract present  
+PASS  keywords present  
+PASS  TABLE I. caption  
+PASS  TABLE II. caption  
+PASS  TABLE III. caption  
+PASS  TABLE IV. caption  
+PASS  no TABLE V  
+PASS  Fig. 1. caption  
+PASS  Fig. 2. caption  
+PASS  no Fig. 3 caption  
+      raster images: 0 (figures are SVG, exported by LibreOffice as vector drawings)
+PASS  vector figure label drawn: 'Intent Classifier'  
+PASS  vector figure label drawn: 'Encrypted Copy'  
+PASS  vector figure label drawn: 'Reply to Interface'  
+PASS  vector figure label drawn: 'FAISS Index'  
+PASS  vector figure label drawn: 'Similarity Search'  
+PASS  vector figure label drawn: 'Prompt Assembly'  
+PASS  references [1]..[29] all present, none beyond  found=[1, 2, 3]..[27, 28, 29] n=29
+PASS  References heading  
+PASS  Acknowledgment present  
+PASS  no template text: 'Duplicate the template'  
+PASS  no template text: 'Using the Template'  
+PASS  no template text: 'ready for the template'  
+PASS  no template text: 'Save As command'  
+PASS  no template text: 'Formatting toolbar'  
+PASS  no template text: 'Lorem'  
+PASS  no template text: 'Type title'  
+PASS  no template text: 'Abstract—This electronic'  
+PASS  no template text: 'Identify applicable funding'  
+PASS  no template text: 'Authors and Affiliations'  
+PASS  final value '0.364 ± 0.005'  
+PASS  final value '8.14 ± 0.64'  
+PASS  final value '4.48 ± 0.38'  
+PASS  final value 'sample SD'  
+PASS  final value 'not human-validated'  
+PASS  final value 'in a list naming it'  
+PASS  final value '0.297'  
+PASS  final value '0.054'  
+PASS  final value '0.155'  
+PASS  final value '21/120'  
+PASS  final value '1/120'  
+PASS  final value '11/120'  
+PASS  final value '0.054 to 0.297'  
+PASS  final value 'p = 0.0006'  
+PASS  final value 'p = 0.008'  
+PASS  final value '0.078 and 0.055'  
+PASS  final value '21 to 33 of 120'  
+PASS  final value 'from 1 to 21'  
+PASS  final value '53 sampled items'  
+PASS  no stale value '0.365'  
+PASS  no stale value '8.15'  
+PASS  no stale value '4.48 ± 0.37'  
+PASS  no stale value '0.318'  
+PASS  no stale value '0/120'  
+PASS  no stale value 'against none'  
+PASS  no stale value '0.00057'  
+PASS  no stale value 'one clause and reject'  
+
+62 lines; FAIL=0 []
